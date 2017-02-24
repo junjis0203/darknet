@@ -1,3 +1,4 @@
+*~
 *.o
 *.dSYM
 *.csv
@@ -17,6 +18,7 @@ submission/
 cfg/
 darknet
 .fuse*
+*.weights
 
 # OS Generated #
 .DS_Store*
@@ -24,3 +26,6 @@ ehthumbs.db
 Icon?
 Thumbs.db
 *.swp
+
+lib/
+detector_app

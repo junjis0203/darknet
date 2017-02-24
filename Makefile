@@ -57,9 +57,21 @@ endif
 OBJS = $(addprefix $(OBJDIR), $(OBJ))
 DEPS = $(wildcard src/*.h) Makefile
 
-all: obj backup results $(EXEC)
+LIB = ./lib/libdarknet.a
+OBJ2=gemm.o utils.o cuda.o convolutional_layer.o list.o image.o activations.o im2col.o col2im.o blas.o crop_layer.o dropout_layer.o maxpool_layer.o softmax_layer.o data.o matrix.o network.o connected_layer.o cost_layer.o parser.o option_list.o detection_layer.o captcha.o route_layer.o writing.o box.o nightmare.o normalization_layer.o avgpool_layer.o coco.o dice.o yolo.o detector.o layer.o compare.o classifier.o local_layer.o swag.o shortcut_layer.o activation_layer.o rnn_layer.o gru_layer.o rnn.o rnn_vid.o crnn_layer.o demo.o tag.o cifar.o go.o batchnorm_layer.o art.o region_layer.o reorg_layer.o super.o voxel.o tree.o
+OBJ2+=detector_lib.o
+OBJS2 = $(addprefix $(OBJDIR), $(OBJ2))
+EXEC2 = detector_app
+
+all: obj lib backup results $(EXEC) $(EXEC2)
 
 $(EXEC): $(OBJS)
+	$(CC) $(COMMON) $(CFLAGS) $^ -o $@ $(LDFLAGS)
+
+$(LIB): $(OBJS2)
+	ar rcs $(LIB) $(OBJS2)
+
+$(EXEC2): obj/detector_app.o $(LIB)
 	$(CC) $(COMMON) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(OBJDIR)%.o: %.c $(DEPS)
@@ -70,6 +82,8 @@ $(OBJDIR)%.o: %.cu $(DEPS)
 
 obj:
 	mkdir -p obj
+lib:
+	mkdir -p lib
 backup:
 	mkdir -p backup
 results:
@@ -78,5 +92,5 @@ results:
 .PHONY: clean
 
 clean:
-	rm -rf $(OBJS) $(EXEC)
+	rm -rf $(OBJS) $(EXEC) $(OBJS2) $(LIB) $(EXEC2)
 
