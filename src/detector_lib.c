@@ -132,6 +132,7 @@ int detect_object(image im, network net, float thresh, float hier_thresh, box **
 	    // 左辺はboxの配列へのポインタ、右辺はboxポインタの配列
 	    (*_boxes)[j] = *array[j];
 	}
+	free(array);
 	free_list_contents(box_list);
 	free_list(box_list);
 
@@ -159,4 +160,13 @@ void destroy_detector(network net)
     free_network(net);
     // free_networkで消してない。他にもmake_network以外で確保しているものがないだろうか
     free(net.seen);
+    if (net.steps) {
+        free(net.steps);
+    }
+    if (net.scales) {
+        free(net.scales);
+    }
+    if (net.workspace) {
+        free(net.workspace);
+    }
 }
